@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login / Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .form-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #007AFF;
+            border-bottom: 3px solid #007AFF;
+        }
+        
+        .form {
+            display: none;
+        }
+        
+        .form.active {
+            display: block;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        button[type="submit"]:hover {
+            background: #0056CC;
+        }
+        
+        button[type="submit"]:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+        
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            padding-left: 10px;
+        }
+        
+        .password-requirements ul {
+            margin: 5px 0;
+            padding-left: 15px;
+        }
+        
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007AFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <!-- Tabs for Login/Signup -->
+            <div class="tabs">
+                <div class="tab active" onclick="showLogin()">Login</div>
+                <div class="tab" onclick="showSignup()">Sign Up</div>
+            </div>
+            
+            <!-- Message Display Area -->
+            <div id="message" class="message"></div>
+            
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="form active" onsubmit="handleLogin(event)">
+                <h2>Welcome Back</h2>
+                
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" id="loginBtn">
+                    <span id="loginBtnText">Login</span>
+                </button>
+            </form>
+            
+            <!-- SIGN UP FORM -->
+            <form id="signupForm" class="form" onsubmit="handleSignup(event)">
+                <h2>Create Account</h2>
+                
+                <div class="input-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    <div class="password-requirements">
+                        <strong>Password must:</strong>
+                        <ul>
+                            <li>Be at least 6 characters</li>
+                            <li>Include uppercase and lowercase</li>
+                            <li>Include a number</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" id="signupBtn">
+                    <span id="signupBtnText">Create Account</span>
+                </button>
+            </form>
+            
+            <button class="back-btn" onclick="goBack()">← Back to Home</button>
+        </div>
+    </div>
+
+    <!-- Add Supabase from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase (REPLACE with your keys!)
+        const supabaseUrl = 'https://your-project.supabase.co';
+        const supabaseKey = 'sb_publishable_XUX6iEK_gyl8IdCN1rqefw_vMxGe803';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Check if already logged in
+        checkIfLoggedIn();
+        
+        async function checkIfLoggedIn() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // Already logged in, redirect to dashboard
+                showMessage('You are already logged in. Redirecting...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }
+        }
+        
+        // Show Login Form
+        function showLogin() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.tab:nth-child(1)').classList.add('active');
+            
+            document.querySelectorAll('.form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('loginForm').classList.add('active');
+            
+            clearMessage();
+        }
+        
+        // Show Signup Form
+        function showSignup() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.tab:nth-child(2)').classList.add('active');
+            
+            document.querySelectorAll('.form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('signupForm').classList.add('active');
+            
+            clearMessage();
+        }
+        
+        // Handle Login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            clearMessage();
+            
+            if (!email || !password) {
+                showMessage('Please enter both email and password', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            loginBtn.disabled = true;
+            loginBtnText.innerHTML = '<div class="loader"></div> Logging in...';
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                // Successful login
+                showMessage('Login successful! Redirecting to dashboard...', 'success');
+                
+                // Redirect to dashboard after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                showMessage(error.message, 'error');
+                
+                // Reset button
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Login';
+            }
+        }
+        
+        // Handle Sign Up
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            clearMessage();
+            
+            // Validation
+            if (!name || !email || !password || !confirmPassword) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const signupBtn = document.getElementById('signupBtn');
+            const signupBtnText = document.getElementById('signupBtnText');
+            signupBtn.disabled = true;
+            signupBtnText.innerHTML = '<div class="loader"></div> Creating account...';
+            
+            try {
+                // 1. Sign up with Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: name,
+                        }
+                    }
+                });
+                
+                if (authError) throw authError;
+                
+                // 2. Create user profile in a separate table (optional but recommended)
+                if (authData.user) {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: authData.user.id,
+                                full_name: name,
+                                email: email,
+                                created_at: new Date().toISOString()
+                            }
+                        ]);
+                    
+                    if (profileError) {
+                        console.log('Profile creation error (but account created):', profileError);
+                        // Continue anyway - auth account is created
+                    }
+                }
+                
+                // Success message
+                showMessage('Account created successfully! Please check your email for verification. You can now login.', 'success');
+                
+                // Reset form
+                document.getElementById('signupForm').reset();
+                
+                // Switch to login tab after 3 seconds
+                setTimeout(() => {
+                    showLogin();
+                }, 3000);
+                
+            } catch (error) {
+                showMessage(error.message, 'error');
+            } finally {
+                // Reset button
+                signupBtn.disabled = false;
+                signupBtnText.textContent = 'Create Account';
+            }
+        }
+        
+        // Go back to home page
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+        
+        // Helper functions
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+        }
+        
+        function clearMessage() {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = '';
+            messageEl.className = 'message';
+            messageEl.style.display = 'none';
+        }
+        
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (session && window.location.pathname.includes('signup.html')) {
+                showMessage('Already logged in. Redirecting...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }
+        });
+        
+        // Initialize - show login form by default
+        showLogin();
+    </script>
+</body>
+</html>

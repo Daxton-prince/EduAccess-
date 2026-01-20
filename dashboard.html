@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: #007AFF;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logout-btn {
+            background: #FF3B30;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .user-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            padding: 100px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="dashboard-content" style="display: none;">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <div class="content">
+            <div class="user-info">
+                <h3>Welcome, <span id="user-email">User</span>!</h3>
+                <p>You are successfully logged in.</p>
+            </div>
+            
+            <h2>Your Protected Content</h2>
+            <p>This page is only accessible after logging in.</p>
+            
+            <!-- Your existing protected content goes here -->
+            <div style="margin-top: 50px; padding: 20px; background: #e9ecef; border-radius: 10px;">
+                <h3>Your App Features:</h3>
+                <ul>
+                    <li>Feature 1 - Only for logged in users</li>
+                    <li>Feature 2 - Protected content</li>
+                    <li>Feature 3 - Requires authentication</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div id="not-logged-in" class="error-message">
+        You must be logged in to view this page. Redirecting...
+    </div>
+
+    <!-- Add Supabase from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase (SAME keys as signup.html)
+        const supabaseUrl = 'https://your-project.supabase.co';
+        const supabaseKey = 'sb_publishable_XUX6iEK_gyl8IdCN1rqefw_vMxGe803';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Check authentication on page load
+        checkAuth();
+        
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                // User is logged in
+                document.getElementById('dashboard-content').style.display = 'block';
+                document.getElementById('not-logged-in').style.display = 'none';
+                
+                // Display user info
+                document.getElementById('user-email').textContent = session.user.email;
+            } else {
+                // User is NOT logged in
+                document.getElementById('dashboard-content').style.display = 'none';
+                document.getElementById('not-logged-in').style.display = 'block';
+                
+                // Redirect to login page after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'signup.html';
+                }, 2000);
+            }
+        }
+        
+        // Logout function
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        }
+        
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (!session && window.location.pathname.includes('dashboard.html')) {
+                window.location.href = 'signup.html';
+            }
+        });
+    </script>
+</body>
+</html>

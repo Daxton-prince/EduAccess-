@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My App - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My App!</h1>
+    <p>Please login to continue</p>
+    
+    <button onclick="goToLogin()">Login / Sign Up</button>
+    
+    <script>
+        // Check if already logged in
+        checkLoginStatus();
+        
+        function checkLoginStatus() {
+            const token = localStorage.getItem('supabase.auth.token');
+            if (token) {
+                // Already logged in, go directly to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        }
+        
+        function goToLogin() {
+            window.location.href = 'signup.html';
+        }
+    </script>
+</body>
+</html>
